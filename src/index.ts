@@ -7,6 +7,7 @@ export default {
 async fetch(request:Request, env:Env){
 
 const url = new URL(request.url)
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8AhiwBcaTAyjowSFiFfmxv-dQKhzJKn8HyyOqHhfs7ZDFnBWDDQ/exec"
 
 /* CSS */
 
@@ -91,21 +92,70 @@ if(url.pathname === "/"){
 const content = `
 
 <div class="card">
-<a href="/planner">Planner Dashboard</a>
-</div>
 
-<div class="card">
-<a href="/tech">Technician Panel</a>
+<h2>Login</h2>
+
+<form method="POST" action="/login">
+
+<input name="empid" placeholder="Employee ID"
+style="width:100%;padding:10px;margin-bottom:10px" required>
+
+<input type="password" name="password"
+placeholder="Password"
+style="width:100%;padding:10px;margin-bottom:10px" required>
+
+<button style="padding:10px 20px">Login</button>
+
+</form>
+
 </div>
 
 `
 
-return new Response(renderHtml("",content),{
+return new Response(renderHtml("Login",content),{
 headers:{ "content-type":"text/html"}
 })
 
 }
 
+/* Login */
+if(url.pathname === "/login" && request.method === "POST"){
+
+const form = await request.formData()
+
+const emp_id = form.get("empid")
+const password = form.get("password")
+
+const res = await fetch(GAS_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"login",
+emp_id,
+password
+})
+})
+
+const data = await res.json()
+
+if(data.status === "success"){
+
+if(data.role === "planner"){
+return Response.redirect(new URL("/menu",request.url),302)
+}
+
+if(data.role === "technician"){
+return Response.redirect(new URL("/tech",request.url),302)
+}
+
+}
+
+return new Response("Login Failed")
+
+}
+  
 /* PLANNER */
 
 if(url.pathname === "/planner"){
@@ -122,6 +172,27 @@ headers:{ "content-type":"text/html"}
 })
 }
 
+/* MENU*/
+if(url.pathname === "/menu"){
+
+const content = `
+
+<div class="card">
+<a href="/planner">Planner Dashboard</a>
+</div>
+
+<div class="card">
+<a href="/tech">Technician Panel</a>
+</div>
+
+`
+
+return new Response(renderHtml("Planner Menu",content),{
+headers:{ "content-type":"text/html"}
+})
+
+}
+ 
 return new Response("404",{status:404})
 
 }
