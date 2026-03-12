@@ -1,4 +1,4 @@
-export function renderHtml(){
+export function renderHtml(title: string, content: string){
 
 return `
 
@@ -10,7 +10,7 @@ return `
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tech Task Manager</title>
+<title>${title}</title>
 
 <link rel="stylesheet" href="/style.css">
 
@@ -24,23 +24,17 @@ return `
 
 <div class="container">
 
-<div class="grid">
+<div style="margin-bottom:20px;color:#9aa4ad">
 
-<a class="card" href="/planner">
-<div class="card-title">Planner Dashboard</div>
-<div class="card-desc">
-Create jobs and plan technician tasks
-</div>
+<a href="/" style="color:#00d4ff;text-decoration:none">
+Tech Task Manager
 </a>
 
-<a class="card" href="/tech">
-<div class="card-title">Technician Panel</div>
-<div class="card-desc">
-Technician task list and runtime control
-</div>
-</a>
+${title ? ` > ${title}` : ""}
 
 </div>
+
+${content}
 
 </div>
 
