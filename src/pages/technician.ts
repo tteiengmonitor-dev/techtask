@@ -1,32 +1,18 @@
+import { renderHtml } from "../renderHtml"
+
 export function technicianPage(){
 
-return `
-<html>
+const content = `
 
-<head>
-<meta charset="UTF-8">
-<title>Technician</title>
-<link rel="stylesheet" href="/style.css">
-</head>
-
-<body>
-
-<div class="header">
-Technician Tasks
-</div>
-
-<div class="container">
+<h2>Technician Tasks</h2>
 
 <div class="card">
-Task example
+Example task
 <button>Start</button>
 </div>
 
-</div>
-
-</body>
-
-</html>
 `
+
+return renderHtml("Technician Panel", content)
 
 }
