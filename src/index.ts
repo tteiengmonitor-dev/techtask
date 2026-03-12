@@ -1,34 +1,105 @@
-import style from "./style.css"
+import { renderHtml } from "./renderHtml"
+import { plannerPage } from "./pages/planner"
+import { technicianPage } from "./pages/technician"
 
 export default {
-  async fetch(request: Request, env: Env) {
 
-    const url = new URL(request.url)
+async fetch(request: Request, env: Env) {
 
-    if (url.pathname === "/style.css") {
-      return new Response(style, {
-        headers: { "content-type": "text/css" }
-      })
-    }
+const url = new URL(request.url)
 
-    if (url.pathname === "/") {
-      return new Response(indexPage(), {
-        headers: { "content-type": "text/html" }
-      })
-    }
+/* -----------------------
+   CSS
+----------------------- */
 
-    if (url.pathname === "/planner") {
-      return new Response(plannerPage(), {
-        headers: { "content-type": "text/html" }
-      })
-    }
+if(url.pathname === "/style.css"){
 
-    if (url.pathname === "/tech") {
-      return new Response(technicianPage(), {
-        headers: { "content-type": "text/html" }
-      })
-    }
-
-    return new Response("404", { status: 404 })
-  }
+const css = `
+body{
+background:#0d0f12;
+color:#e6e6e6;
+font-family:Segoe UI,system-ui;
+margin:0;
 }
+
+.header{
+background:#15191f;
+padding:20px;
+border-bottom:1px solid #2b3440;
+font-size:22px;
+font-weight:600;
+color:#00d4ff;
+}
+
+.container{
+padding:30px;
+max-width:1200px;
+margin:auto;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:#15191f;
+border:1px solid #2b3440;
+border-radius:8px;
+padding:20px;
+text-decoration:none;
+color:white;
+display:block;
+transition:0.2s;
+}
+
+.card:hover{
+background:#1d232b;
+}
+
+.card-title{
+font-size:18px;
+margin-bottom:10px;
+color:#00ff9c;
+}
+
+.card-desc{
+font-size:13px;
+color:#9aa4ad;
+}
+`
+
+return new Response(css,{
+headers:{ "content-type":"text/css" }
+})
+
+}
+
+/* -----------------------
+   ROUTES
+----------------------- */
+
+if(url.pathname === "/"){
+return new Response(renderHtml(),{
+headers:{ "content-type":"text/html"}
+})
+}
+
+if(url.pathname === "/planner"){
+return new Response(plannerPage(),{
+headers:{ "content-type":"text/html"}
+})
+}
+
+if(url.pathname === "/tech"){
+return new Response(technicianPage(),{
+headers:{ "content-type":"text/html"}
+})
+}
+
+return new Response("404",{status:404})
+
+}
+
+} satisfies ExportedHandler<Env>;
