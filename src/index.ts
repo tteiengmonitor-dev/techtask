@@ -47,93 +47,15 @@ const user = getUser(request)
 
 /* CSS */
 
+import style from "./style.css"
+
 if(url.pathname === "/style.css"){
 
-const css = `
-:root{
---primary:#00ff9c;
---secondary:#00d4ff;
---warning:#ffc107;
---danger:#ff4d4f;
---bg:#0d0f12;
---panel:#15191f;
---border:#2b3440;
---text:#e6e6e6;
+return new Response(style,{
+headers:{
+"content-type":"text/css"
 }
 
-body{
-background:#0d0f12;
-color:#e6e6e6;
-font-family:Segoe UI,system-ui;
-margin:0;
-}
-
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#15191f;
-padding:20px;
-border-bottom:1px solid #2b3440;
-font-size:22px;
-font-weight:600;
-color:#00d4ff;
-}
-
-.container{
-padding:30px;
-max-width:1200px;
-margin:auto;
-}
-
-.card{
-background:#15191f;
-border:1px solid #2b3440;
-border-radius:8px;
-padding:20px;
-margin-top:20px;
-}
-
-.card a {
-display:block;
-color:#00ff9c;
-text-decoration:none;
-}
-
-.card a:hover{
-color:#00d4ff;
-}
-
-a {
-color:#00ff9c;
-text-decoration:none;
-}
-
-a:hover {
-color:#00d4ff;
-}
-
-a:visited {
-color:#00ff9c;
-}
-
-.profile-name{
-font-size:13px;
-color:#9aa4af;
-font-weight:500;
-}
-
-.logout-btn{
-font-size:13px;
-padding:5px 10px;
-border:1px solid #2b3440;
-border-radius:6px;
-color:#00ff9c;
-}
-`
-
-return new Response(css,{
-headers:{ "content-type":"text/css"}
 })
 
 }
