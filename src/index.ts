@@ -2,12 +2,52 @@ import { renderHtml } from "./renderHtml"
 import { plannerPage } from "./pages/planner"
 import { technicianPage } from "./pages/technician"
 
+function getUser(request:Request){
+
+const cookie = request.headers.get("Cookie") || ""
+const match = cookie.match(/user=([^;]+)/)
+
+if(!match) return null
+
+return JSON.parse(decodeURIComponent(match[1]))
+
+}
+
+function headerProfile(user:any){
+
+if(!user) return ""
+
+return `
+<div style="
+display:flex;
+gap:15px;
+align-items:center;
+font-size:14px;
+color:#e6e6e6;
+">
+
+<span>${user.name} (${user.role})</span>
+
+<a href="/logout" style="
+padding:6px 10px;
+border:1px solid #2b3440;
+border-radius:6px;
+">Logout</a>
+
+</div>
+`
+
+}
+
 export default {
 
 async fetch(request:Request, env:Env){
 
 const url = new URL(request.url)
+
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8AhiwBcaTAyjowSFiFfmxv-dQKhzJKn8HyyOqHhfs7ZDFnBWDDQ/exec"
+
+const user = getUser(request)
 
 /* CSS */
 
@@ -33,6 +73,9 @@ margin:0;
 }
 
 .header{
+display:flex;
+justify-content:space-between;
+align-items:center;
 background:#15191f;
 padding:20px;
 border-bottom:1px solid #2b3440;
@@ -56,26 +99,26 @@ margin-top:20px;
 }
 
 .card a {
-  display:block;
-  color:#00ff9c;
-  text-decoration:none;
+display:block;
+color:#00ff9c;
+text-decoration:none;
 }
 
 .card a:hover{
-  color:#00d4ff;
+color:#00d4ff;
 }
 
 a {
-  color: #00ff9c;
-  text-decoration: none;
+color:#00ff9c;
+text-decoration:none;
 }
 
 a:hover {
-  color: #00d4ff;
+color:#00d4ff;
 }
 
 a:visited {
-  color: #00ff9c;
+color:#00ff9c;
 }
 `
 
@@ -85,7 +128,7 @@ headers:{ "content-type":"text/css"}
 
 }
 
-/* DASHBOARD */
+/* LOGIN PAGE */
 
 if(url.pathname === "/"){
 
@@ -118,7 +161,8 @@ headers:{ "content-type":"text/html"}
 
 }
 
-/* Login */
+/* LOGIN PROCESS */
+
 if(url.pathname === "/login" && request.method === "POST"){
 
 const form = await request.formData()
@@ -142,12 +186,30 @@ const data = await res.json()
 
 if(data.status === "success"){
 
+const cookie = `user=${encodeURIComponent(JSON.stringify(data))}; Path=/; HttpOnly`
+
 if(data.role === "planner"){
-return Response.redirect(new URL("/menu",request.url),302)
+
+return new Response(null,{
+status:302,
+headers:{
+"Location":"/menu",
+"Set-Cookie":cookie
+}
+})
+
 }
 
 if(data.role === "technician"){
-return Response.redirect(new URL("/tech",request.url),302)
+
+return new Response(null,{
+status:302,
+headers:{
+"Location":"/tech",
+"Set-Cookie":cookie
+}
+})
+
 }
 
 }
@@ -155,25 +217,26 @@ return Response.redirect(new URL("/tech",request.url),302)
 return new Response("Login Failed")
 
 }
-  
-/* PLANNER */
 
-if(url.pathname === "/planner"){
-return new Response(plannerPage(),{
-headers:{ "content-type":"text/html"}
+/* LOGOUT */
+
+if(url.pathname === "/logout"){
+
+return new Response(null,{
+status:302,
+headers:{
+"Location":"/",
+"Set-Cookie":"user=; Path=/; Max-Age=0"
+}
 })
+
 }
 
-/* TECH */
+/* MENU (planner only) */
 
-if(url.pathname === "/tech"){
-return new Response(technicianPage(),{
-headers:{ "content-type":"text/html"}
-})
-}
-
-/* MENU*/
 if(url.pathname === "/menu"){
+
+if(!user) return Response.redirect("/",302)
 
 const content = `
 
@@ -192,7 +255,49 @@ headers:{ "content-type":"text/html"}
 })
 
 }
- 
+
+/* PLANNER */
+
+if(url.pathname === "/planner"){
+
+if(!user) return Response.redirect("/",302)
+
+const content = `
+<div class="header">
+⚡ Tech Task Manager
+${headerProfile(user)}
+</div>
+
+${plannerPage()}
+`
+
+return new Response(content,{
+headers:{ "content-type":"text/html"}
+})
+
+}
+
+/* TECHNICIAN */
+
+if(url.pathname === "/tech"){
+
+if(!user) return Response.redirect("/",302)
+
+const content = `
+<div class="header">
+⚡ Tech Task Manager
+${headerProfile(user)}
+</div>
+
+${technicianPage()}
+`
+
+return new Response(content,{
+headers:{ "content-type":"text/html"}
+})
+
+}
+
 return new Response("404",{status:404})
 
 }
