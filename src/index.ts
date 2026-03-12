@@ -229,7 +229,7 @@ if(url.pathname === "/api/task/create" && request.method === "POST"){
 
 if(!user) return Response.json({error:"not login"},{status:401})
 
-const body = await request.json()
+const body:any = await request.json()
 
 const taskId = "TASK-" + Date.now()
 
@@ -249,9 +249,9 @@ user.emp_id
 )
 .run()
 
-/* create emp_tasks */
+const technicians = body.technicians || []
 
-for(const emp of body.technicians){
+for(const emp of technicians){
 
 await env.DB.prepare(`
 INSERT INTO emp_tasks
