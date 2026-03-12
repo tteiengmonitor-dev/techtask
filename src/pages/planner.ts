@@ -1,8 +1,6 @@
-import { renderHtml } from "../renderHtml"
-
 export function plannerPage(){
 
-const content = `
+return `
 
 <h2>Create Job</h2>
 
@@ -11,7 +9,5 @@ const content = `
 <button>Create</button>
 
 `
-
-return renderHtml("Planner Dashboard", content)
 
 }
