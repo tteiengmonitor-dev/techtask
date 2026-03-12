@@ -274,6 +274,37 @@ task_id:taskId
 
 }
 
+/* API MY TASKS */
+
+if(url.pathname === "/api/mytasks"){
+
+if(!user) {
+  return Response.json({error:"not login"},{status:401})
+}
+
+const empId = String(user.emp_id)
+
+const result = await env.DB.prepare(`
+SELECT
+et.emp_task_id,
+t.task_id,
+t.job_id,
+t.task_name,
+t.task_date,
+t.priority,
+et.status
+FROM emp_tasks et
+JOIN tasks t ON et.task_id = t.task_id
+WHERE et.emp_id = ?
+ORDER BY t.task_date DESC
+`)
+.bind(empId)
+.all()
+
+return Response.json(result)
+
+}
+  
 return new Response("404",{status:404})
 
 }
