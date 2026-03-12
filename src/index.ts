@@ -4,13 +4,11 @@ import { technicianPage } from "./pages/technician"
 
 export default {
 
-async fetch(request: Request, env: Env) {
+async fetch(request:Request, env:Env){
 
 const url = new URL(request.url)
 
-/* -----------------------
-   CSS
------------------------ */
+/* CSS */
 
 if(url.pathname === "/style.css"){
 
@@ -37,60 +35,52 @@ max-width:1200px;
 margin:auto;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
-
 .card{
 background:#15191f;
 border:1px solid #2b3440;
 border-radius:8px;
 padding:20px;
-text-decoration:none;
-color:white;
-display:block;
-transition:0.2s;
-}
-
-.card:hover{
-background:#1d232b;
-}
-
-.card-title{
-font-size:18px;
-margin-bottom:10px;
-color:#00ff9c;
-}
-
-.card-desc{
-font-size:13px;
-color:#9aa4ad;
+margin-top:20px;
 }
 `
 
 return new Response(css,{
-headers:{ "content-type":"text/css" }
+headers:{ "content-type":"text/css"}
 })
 
 }
 
-/* -----------------------
-   ROUTES
------------------------ */
+/* DASHBOARD */
 
 if(url.pathname === "/"){
-return new Response(renderHtml(),{
+
+const content = `
+
+<div class="card">
+<a href="/planner">Planner Dashboard</a>
+</div>
+
+<div class="card">
+<a href="/tech">Technician Panel</a>
+</div>
+
+`
+
+return new Response(renderHtml("",content),{
 headers:{ "content-type":"text/html"}
 })
+
 }
+
+/* PLANNER */
 
 if(url.pathname === "/planner"){
 return new Response(plannerPage(),{
 headers:{ "content-type":"text/html"}
 })
 }
+
+/* TECH */
 
 if(url.pathname === "/tech"){
 return new Response(technicianPage(),{
