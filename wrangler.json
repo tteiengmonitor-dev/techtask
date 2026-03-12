@@ -3,6 +3,11 @@
 	"main": "src/index.ts",
 	"name": "techtask",
 	"upload_source_maps": true,
+
+	"assets": {
+		"directory": "./public"
+	},
+
 	"d1_databases": [
 		{
 			"binding": "DB",
