@@ -210,6 +210,19 @@ headers:{ "content-type":"text/html"}
 
 }
 
+/* API TASK LIST */
+
+if(url.pathname === "/api/tasks"){
+
+const result = await env.DB.prepare(`
+SELECT * FROM tasks
+ORDER BY created_time DESC
+`).all()
+
+return Response.json(result)
+
+}
+
 return new Response("404",{status:404})
 
 }
