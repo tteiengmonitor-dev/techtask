@@ -223,6 +223,57 @@ return Response.json(result)
 
 }
 
+/* CREATE TASK API */
+
+if(url.pathname === "/api/task/create" && request.method === "POST"){
+
+if(!user) return Response.json({error:"not login"},{status:401})
+
+const body = await request.json()
+
+const taskId = "TASK-" + Date.now()
+
+await env.DB.prepare(`
+INSERT INTO tasks
+(task_id, job_id, task_name, task_date, priority, detail, created_by)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+`)
+.bind(
+taskId,
+body.job_id,
+body.task_name,
+body.task_date,
+body.priority,
+body.detail,
+user.emp_id
+)
+.run()
+
+/* create emp_tasks */
+
+for(const emp of body.technicians){
+
+await env.DB.prepare(`
+INSERT INTO emp_tasks
+(emp_task_id, task_id, emp_id)
+VALUES (?, ?, ?)
+`)
+.bind(
+crypto.randomUUID(),
+taskId,
+emp
+)
+.run()
+
+}
+
+return Response.json({
+success:true,
+task_id:taskId
+})
+
+}
+
 return new Response("404",{status:404})
 
 }
