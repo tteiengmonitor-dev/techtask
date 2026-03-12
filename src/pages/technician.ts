@@ -1,8 +1,6 @@
-import { renderHtml } from "../renderHtml"
-
 export function technicianPage(){
 
-const content = `
+return `
 
 <h2>Technician Tasks</h2>
 
@@ -12,7 +10,5 @@ Example task
 </div>
 
 `
-
-return renderHtml("Technician Panel", content)
 
 }
