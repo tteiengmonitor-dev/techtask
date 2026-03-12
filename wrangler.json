@@ -1,21 +1,22 @@
 {
-	"compatibility_date": "2025-10-08",
-	"main": "src/index.ts",
-	"name": "techtask",
-	"upload_source_maps": true,
+  "name": "techtask",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-10-08",
+  "upload_source_maps": true,
 
-	"assets": {
-		"directory": "./public"
-	},
+  "assets": {
+    "directory": "./public"
+  },
 
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_id": "b90f3f55-64fa-4c88-a119-adc1ad6923cb",
-			"database_name": "techtask-database"
-		}
-	],
-	"observability": {
-		"enabled": true
-	}
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "b90f3f55-64fa-4c88-a119-adc1ad6923cb",
+      "database_name": "techtask-database"
+    }
+  ],
+
+  "observability": {
+    "enabled": true
+  }
 }
