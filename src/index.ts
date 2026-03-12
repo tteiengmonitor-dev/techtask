@@ -1,46 +1,30 @@
-export function indexPage(){
+import { indexPage } from "./pages/index";
+import { plannerPage } from "./pages/planner";
+import { technicianPage } from "./pages/technician";
 
-return `
+export default {
+  async fetch(request: Request, env: Env) {
 
-<!DOCTYPE html>
-<html>
+    const url = new URL(request.url);
 
-<head>
+    if (url.pathname === "/") {
+      return new Response(indexPage(), {
+        headers: { "content-type": "text/html" }
+      });
+    }
 
-<title>Tech Task Manager</title>
+    if (url.pathname === "/planner") {
+      return new Response(plannerPage(), {
+        headers: { "content-type": "text/html" }
+      });
+    }
 
-<link rel="stylesheet" href="/css/style.css">
+    if (url.pathname === "/tech") {
+      return new Response(technicianPage(), {
+        headers: { "content-type": "text/html" }
+      });
+    }
 
-</head>
-
-<body>
-
-<div class="header">
-⚡ Tech Task Manager
-</div>
-
-<div class="container">
-
-<div class="grid">
-
-<a class="card" href="/planner">
-<div class="card-title">Planner Dashboard</div>
-<div class="card-desc">Create job and plan technician tasks</div>
-</a>
-
-<a class="card" href="/tech">
-<div class="card-title">Technician Panel</div>
-<div class="card-desc">Technician task list</div>
-</a>
-
-</div>
-
-</div>
-
-</body>
-
-</html>
-
-`
-
-}
+    return new Response("404", { status: 404 });
+  }
+};
