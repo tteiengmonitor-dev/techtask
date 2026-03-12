@@ -3,7 +3,13 @@ export function renderHtml(title:string, content:string, user?:any){
 const profile = user ? `
 <div style="display:flex;gap:12px;align-items:center">
 
-<span>${user.name} (${user.role})</span>
+<div class="profile">
+
+<div class="profile-name">${user.name}</div>
+
+<div class="profile-role">${user.role}</div>
+
+</div>
 
 <a href="/logout" style="
 padding:6px 10px;
