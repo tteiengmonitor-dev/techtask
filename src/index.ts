@@ -13,6 +13,17 @@ const url = new URL(request.url)
 if(url.pathname === "/style.css"){
 
 const css = `
+:root{
+--primary:#00ff9c;
+--secondary:#00d4ff;
+--warning:#ffc107;
+--danger:#ff4d4f;
+--bg:#0d0f12;
+--panel:#15191f;
+--border:#2b3440;
+--text:#e6e6e6;
+}
+
 body{
 background:#0d0f12;
 color:#e6e6e6;
@@ -41,6 +52,29 @@ border:1px solid #2b3440;
 border-radius:8px;
 padding:20px;
 margin-top:20px;
+}
+
+.card a {
+  display:block;
+  color:#00ff9c;
+  text-decoration:none;
+}
+
+.card a:hover{
+  color:#00d4ff;
+}
+
+a {
+  color: #00ff9c;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #00d4ff;
+}
+
+a:visited {
+  color: #00ff9c;
 }
 `
 
