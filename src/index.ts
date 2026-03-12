@@ -1,7 +1,6 @@
 import { renderHtml } from "./renderHtml"
 import { plannerPage } from "./pages/planner"
 import { technicianPage } from "./pages/technician"
-import style from "./style.css"
 
 function getUser(request:Request){
 
