@@ -65,10 +65,22 @@ a:visited {
 color:#00ff9c;
 }
 
+.profile{
+display:flex;
+flex-direction:column;
+align-items:flex-end;
+line-height:1.2;
+}
+
 .profile-name{
 font-size:13px;
-color:#9aa4af;
-font-weight:500;
+color:#c9d1d9;
+}
+
+.profile-role{
+font-size:11px;
+color:#8b949e;
+text-transform:capitalize;
 }
 
 .logout-btn{
