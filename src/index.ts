@@ -1,6 +1,7 @@
 import { renderHtml } from "./renderHtml"
 import { plannerPage } from "./pages/planner"
 import { technicianPage } from "./pages/technician"
+import style from "./style.css"
 
 function getUser(request:Request){
 
@@ -46,9 +47,6 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8Ahiw
 const user = getUser(request)
 
 /* CSS */
-
-import style from "./style.css"
-
 if(url.pathname === "/style.css"){
 
 return new Response(style,{
