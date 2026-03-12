@@ -28,11 +28,7 @@ color:#e6e6e6;
 
 <span>${user.name} (${user.role})</span>
 
-<a href="/logout" style="
-padding:6px 10px;
-border:1px solid #2b3440;
-border-radius:6px;
-">Logout</a>
+<a href="/logout" class="logout-btn">Logout</a>
 
 </div>
 `
@@ -118,6 +114,20 @@ color:#00d4ff;
 }
 
 a:visited {
+color:#00ff9c;
+}
+
+.profile-name{
+font-size:13px;
+color:#9aa4af;
+font-weight:500;
+}
+
+.logout-btn{
+font-size:13px;
+padding:5px 10px;
+border:1px solid #2b3440;
+border-radius:6px;
 color:#00ff9c;
 }
 `
