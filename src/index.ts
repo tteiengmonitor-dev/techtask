@@ -245,7 +245,7 @@ body.task_name,
 body.task_date,
 body.priority,
 body.detail,
-user.emp_id
+String(user.emp_id)
 )
 .run()
 
