@@ -28,7 +28,7 @@ if(url.pathname === "/tech"){
   })
 }
 
-if(url.pathname === "/css/style.css"){
+if(url.pathname === "/style.css"){
   return new Response(style,{
     headers:{ "content-type":"text/css"}
   })
