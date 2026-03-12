@@ -30,7 +30,7 @@ return `
 
 <title>${title}</title>
 
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="public/style.css">
 
 </head>
 
