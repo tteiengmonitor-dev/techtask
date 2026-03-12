@@ -304,6 +304,48 @@ ORDER BY t.task_date DESC
 return Response.json(result)
 
 }
+
+/* START TASK */
+
+if(url.pathname === "/api/task/start" && request.method === "POST"){
+
+if(!user) return Response.json({error:"not login"},{status:401})
+
+const body:any = await request.json()
+
+await env.DB.prepare(`
+UPDATE emp_tasks
+SET status='working',
+start_time=datetime('now')
+WHERE emp_task_id=? AND emp_id=?
+`)
+.bind(body.emp_task_id, String(user.emp_id))
+.run()
+
+return Response.json({success:true})
+
+}
+
+/* FINISH TASK */
+
+if(url.pathname === "/api/task/finish" && request.method === "POST"){
+
+if(!user) return Response.json({error:"not login"},{status:401})
+
+const body:any = await request.json()
+
+await env.DB.prepare(`
+UPDATE emp_tasks
+SET status='done',
+end_time=datetime('now')
+WHERE emp_task_id=? AND emp_id=?
+`)
+.bind(body.emp_task_id, String(user.emp_id))
+.run()
+
+return Response.json({success:true})
+
+}
   
 return new Response("404",{status:404})
 
