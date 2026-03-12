@@ -46,17 +46,6 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8Ahiw
 
 const user = getUser(request)
 
-/* CSS */
-if(url.pathname === "/style.css"){
-
-return new Response(style,{
-headers:{
-"content-type":"text/css"
-}
-
-})
-
-}
 
 /* LOGIN PAGE */
 
