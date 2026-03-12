@@ -262,16 +262,13 @@ if(url.pathname === "/planner"){
 
 if(!user) return Response.redirect("/",302)
 
-const content = `
-<div class="header">
-⚡ Tech Task Manager
-${headerProfile(user)}
-</div>
-
-${plannerPage()}
-`
-
-return new Response(content,{
+return new Response(
+renderHtml(
+"Planner Dashboard",
+plannerPage(),
+user
+),
+{
 headers:{ "content-type":"text/html"}
 })
 
@@ -283,16 +280,13 @@ if(url.pathname === "/tech"){
 
 if(!user) return Response.redirect("/",302)
 
-const content = `
-<div class="header">
-⚡ Tech Task Manager
-${headerProfile(user)}
-</div>
-
-${technicianPage()}
-`
-
-return new Response(content,{
+return new Response(
+renderHtml(
+"Technician Panel",
+technicianPage(),
+user
+),
+{
 headers:{ "content-type":"text/html"}
 })
 
