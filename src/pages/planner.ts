@@ -45,9 +45,9 @@ Finish Time<br>
 
 <h3>Assign Technician</h3>
 
-<label><input type="checkbox" value="36901"> 36901</label><br>
-<label><input type="checkbox" value="47510"> 47510</label><br>
-<label><input type="checkbox" value="48123"> 48123</label><br>
+<div id="techList">
+Loading technicians...
+</div>
 
 <br>
 
@@ -57,9 +57,43 @@ Finish Time<br>
 
 <script>
 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8AhiwBcaTAyjowSFiFfmxv-dQKhzJKn8HyyOqHhfs7ZDFnBWDDQ/exec"
+
+document.getElementById("task_date").value =
+new Date().toISOString().slice(0,10)
+
+
+async function loadTechnicians(){
+
+const res = await fetch(GAS_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"technicians"
+})
+})
+
+const data = await res.json()
+
+const list = document.getElementById("techList")
+
+list.innerHTML = data.map(t => \`
+
+<label>
+<input type="checkbox" value="\${t.emp_id}">
+\${t.emp_id} \${t.name}
+</label><br>
+
+\`).join("")
+
+}
+
+
 async function createTask(){
 
-const technicians = [...document.querySelectorAll("input[type=checkbox]:checked")]
+const technicians = [...document.querySelectorAll("#techList input:checked")]
 .map(e=>e.value)
 
 const data = {
@@ -83,9 +117,11 @@ body:JSON.stringify(data)
 
 const result = await res.json()
 
-alert("Task created: "+result.task_id)
+alert("Task created: " + result.task_id)
 
 }
+
+loadTechnicians()
 
 </script>
 
