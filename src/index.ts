@@ -45,7 +45,22 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8Ahiw
 
 const user = getUser(request)
 
+/* HOME ROUTE */
 
+if(url.pathname === "/home"){
+
+if(!user) return Response.redirect("/",302)
+
+if(user.role === "planner"){
+return Response.redirect("/menu",302)
+}
+
+if(user.role === "technician"){
+return Response.redirect("/tech",302)
+}
+
+}
+  
 /* LOGIN PAGE */
 
 if(url.pathname === "/"){
