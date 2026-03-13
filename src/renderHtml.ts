@@ -38,7 +38,7 @@ return `
 
 <div class="header">
 
-<div>⚡ Tech Task Manager</div>
+<div><a href="/home" class="logo">⚡ Tech Task Manager</a></div>
 
 ${profile}
 
