@@ -49,14 +49,16 @@ const user = getUser(request)
 
 if(url.pathname === "/home"){
 
-if(!user) return Response.redirect("/",302)
+if(!user){
+return Response.redirect(new URL("/", request.url),302)
+}
 
 if(user.role === "planner"){
-return Response.redirect("/menu",302)
+return Response.redirect(new URL("/menu", request.url),302)
 }
 
 if(user.role === "technician"){
-return Response.redirect("/tech",302)
+return Response.redirect(new URL("/tech", request.url),302)
 }
 
 }
