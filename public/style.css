@@ -90,3 +90,10 @@ border:1px solid #2b3440;
 border-radius:6px;
 color:#00ff9c;
 }
+
+.logo{
+font-weight:bold;
+text-decoration:none;
+color:#fff;
+font-size:18px;
+}
