@@ -254,27 +254,9 @@ if(!user) return Response.json({error:"not login"},{status:401})
 
 const body:any = await request.json()
 
-const today = body.task_date
+const taskId = "TASK-" + Date.now()
 
-const countResult = await env.DB.prepare(`
-SELECT COUNT(*) as c
-FROM tasks
-WHERE task_date = ?
-`)
-.bind(today)
-.first()
-
-const seq = (countResult?.c || 0) + 1
-
-const d = new Date(today)
-
-const yy = String(d.getFullYear()).slice(-2)
-const mm = String(d.getMonth()+1).padStart(2,"0")
-const dd = String(d.getDate()).padStart(2,"0")
-
-const seqStr = String(seq).padStart(3,"0")
-
-const taskId = `TASK-${yy}${mm}${dd}${seqStr}`
+/* create task */
 
 await env.DB.prepare(`
 INSERT INTO tasks
@@ -288,13 +270,15 @@ body.detail,
 body.task_date,
 body.start_time_plan,
 body.finish_time_plan,
-String(user.emp_id)
+user.emp_id
 )
 .run()
 
-const technicians = body.technicians || []
+/* create emp_tasks */
 
-for(const emp of technicians){
+if(body.technicians && body.technicians.length){
+
+for(const emp of body.technicians){
 
 await env.DB.prepare(`
 INSERT INTO emp_tasks
@@ -307,6 +291,8 @@ taskId,
 emp
 )
 .run()
+
+}
 
 }
 
