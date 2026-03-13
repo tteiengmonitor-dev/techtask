@@ -191,7 +191,7 @@ Finish
 
 async function startTask(empTaskId){
 
-await fetch("/api/runtime/start",{
+const res = await fetch("/api/runtime/start",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -200,6 +200,13 @@ body:JSON.stringify({
 emp_task_id:empTaskId
 })
 })
+
+if(!res.ok){
+alert("You are already working on another task")
+return
+}
+
+const data = await res.json()
 
 loadTasks()
 
