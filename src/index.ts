@@ -2,73 +2,32 @@ import { renderHtml } from "./renderHtml"
 import { plannerPage } from "./pages/planner"
 import { technicianPage } from "./pages/technician"
 
-function getUser(request:Request){
+function getUser(request: Request) {
 
-const cookie = request.headers.get("Cookie") || ""
-const match = cookie.match(/user=([^;]+)/)
+  const cookie = request.headers.get("Cookie") || ""
+  const match = cookie.match(/user=([^;]+)/)
 
-if(!match) return null
+  if (!match) return null
 
-return JSON.parse(decodeURIComponent(match[1]))
-
-}
-
-function headerProfile(user:any){
-
-if(!user) return ""
-
-return `
-<div style="
-display:flex;
-gap:15px;
-align-items:center;
-font-size:14px;
-color:#e6e6e6;
-">
-
-<span>${user.name} (${user.role})</span>
-
-<a href="/logout" class="logout-btn">Logout</a>
-
-</div>
-`
-
+  return JSON.parse(decodeURIComponent(match[1]))
 }
 
 export default {
 
-async fetch(request:Request, env:Env){
+async fetch(request: Request, env: Env) {
 
 const url = new URL(request.url)
+const user = getUser(request)
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzIUzPRTYpMJTOkBnG8AhiwBcaTAyjowSFiFfmxv-dQKhzJKn8HyyOqHhfs7ZDFnBWDDQ/exec"
 
-const user = getUser(request)
 
-/* HOME ROUTE */
 
-if(url.pathname === "/home"){
-
-if(!user){
-return Response.redirect(new URL("/", request.url),302)
-}
-
-if(user.role === "planner"){
-return Response.redirect(new URL("/menu", request.url),302)
-}
-
-if(user.role === "technician"){
-return Response.redirect(new URL("/tech", request.url),302)
-}
-
-}
-  
 /* LOGIN PAGE */
 
-if(url.pathname === "/"){
+if (url.pathname === "/") {
 
-const content = `
-
+const html = `
 <div class="card">
 
 <h2>Login</h2>
@@ -87,31 +46,29 @@ style="width:100%;padding:10px;margin-bottom:10px" required>
 </form>
 
 </div>
-
 `
 
-return new Response(renderHtml("Login",content),{
-headers:{ "content-type":"text/html"}
+return new Response(renderHtml("Login", html), {
+headers: { "content-type": "text/html" }
 })
-
 }
+
+
 
 /* LOGIN PROCESS */
 
-if(url.pathname === "/login" && request.method === "POST"){
+if (url.pathname === "/login" && request.method === "POST") {
 
 const form = await request.formData()
 
 const emp_id = form.get("empid")
 const password = form.get("password")
 
-const res = await fetch(GAS_URL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"login",
+const res = await fetch(GAS_URL, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+action: "login",
 emp_id,
 password
 })
@@ -119,144 +76,83 @@ password
 
 const data = await res.json()
 
-if(data.status === "success"){
+if (data.status === "success") {
 
 const cookie = `user=${encodeURIComponent(JSON.stringify(data))}; Path=/; HttpOnly`
 
-if(data.role === "planner"){
-
-return new Response(null,{
-status:302,
-headers:{
-"Location":"/menu",
-"Set-Cookie":cookie
-}
+if (data.role === "planner") {
+return new Response(null, {
+status: 302,
+headers: { "Location": "/planner", "Set-Cookie": cookie }
 })
-
 }
 
-if(data.role === "technician"){
-
-return new Response(null,{
-status:302,
-headers:{
-"Location":"/tech",
-"Set-Cookie":cookie
-}
+if (data.role === "technician") {
+return new Response(null, {
+status: 302,
+headers: { "Location": "/tech", "Set-Cookie": cookie }
 })
-
 }
 
 }
 
 return new Response("Login Failed")
-
 }
+
+
 
 /* LOGOUT */
 
-if(url.pathname === "/logout"){
+if (url.pathname === "/logout") {
 
-return new Response(null,{
-status:302,
-headers:{
-"Location":"/",
-"Set-Cookie":"user=; Path=/; Max-Age=0"
+return new Response(null, {
+status: 302,
+headers: {
+"Location": "/",
+"Set-Cookie": "user=; Path=/; Max-Age=0"
 }
 })
-
 }
 
-/* MENU (planner only) */
 
-if(url.pathname === "/menu"){
 
-if(!user) return Response.redirect("/",302)
+/* PLANNER PAGE */
 
-const content = `
+if (url.pathname === "/planner") {
 
-<div class="card">
-<a href="/planner">Planner Dashboard</a>
-</div>
-
-<div class="card">
-<a href="/tech">Technician Panel</a>
-</div>
-
-`
+if (!user) return Response.redirect(new URL("/", request.url), 302)
 
 return new Response(
-renderHtml(
-"Planner Menu",
-content,
-user
-),
-{
-headers:{ "content-type":"text/html"}
-})
-
+renderHtml("Planner", plannerPage(), user),
+{ headers: { "content-type": "text/html" } }
+)
 }
 
-/* PLANNER */
 
-if(url.pathname === "/planner"){
 
-if(!user) return Response.redirect("/",302)
+/* TECHNICIAN PAGE */
+
+if (url.pathname === "/tech") {
+
+if (!user) return Response.redirect(new URL("/", request.url), 302)
 
 return new Response(
-renderHtml(
-"Planner Dashboard",
-plannerPage(),
-user
-),
-{
-headers:{ "content-type":"text/html"}
-})
-
+renderHtml("Technician", technicianPage(), user),
+{ headers: { "content-type": "text/html" } }
+)
 }
 
-/* TECHNICIAN */
 
-if(url.pathname === "/tech"){
 
-if(!user) return Response.redirect("/",302)
+/* CREATE TASK (planner) */
 
-return new Response(
-renderHtml(
-"Technician Panel",
-technicianPage(),
-user
-),
-{
-headers:{ "content-type":"text/html"}
-})
+if (url.pathname === "/api/task/create" && request.method === "POST") {
 
-}
+if (!user) return Response.json({ error: "not login" }, { status: 401 })
 
-/* API TASK LIST */
-
-if(url.pathname === "/api/tasks"){
-
-const result = await env.DB.prepare(`
-SELECT * FROM tasks
-ORDER BY created_time DESC
-`).all()
-
-return Response.json(result)
-
-}
-
-/* CREATE TASK API */
-
-if(url.pathname === "/api/task/create" && request.method === "POST"){
-
-if(!user) return Response.json({error:"not login"},{status:401})
-
-const body:any = await request.json()
+const body: any = await request.json()
 
 const taskId = "TASK-" + Date.now()
-
-/* create task */
 
 await env.DB.prepare(`
 INSERT INTO tasks
@@ -274,48 +170,37 @@ user.emp_id
 )
 .run()
 
-/* create runtime */
 
-const runtimeId = crypto.randomUUID()
 
-try{
+/* assign technicians */
+
+for (const empId of body.technicians) {
+
+const empTaskId = crypto.randomUUID()
 
 await env.DB.prepare(`
-INSERT INTO runtime_logs
-(runtime_id, emp_task_id, emp_id, start_time)
-VALUES (?, ?, ?, datetime('now'))
+INSERT INTO emp_tasks
+(emp_task_id, task_id, emp_id, status)
+VALUES (?, ?, ?, 'planned')
 `)
-.bind(runtimeId,body.emp_task_id,user.emp_id)
+.bind(empTaskId, taskId, empId)
 .run()
 
-}catch(e){
-
-return new Response(
-JSON.stringify({error:"already working"}),
-{
-status:400,
-headers:{ "content-type":"application/json" }
 }
-)
+
+return Response.json({ success: true, task_id: taskId })
 
 }
 
-return Response.json({
-success:true,
-runtime_id:runtimeId
-})
 
-}
 
-/* GET MY TASKS */
+/* TECHNICIAN TASK LIST */
 
-if(url.pathname === "/api/mytasks"){
+if (url.pathname === "/api/mytasks") {
 
-if(!user) return Response.json({error:"not login"},{status:401})
+if (!user) return Response.json({ error: "not login" }, { status: 401 })
 
 const date = url.searchParams.get("date")
-
-const empId = String(user.emp_id)
 
 const result = await env.DB.prepare(`
 SELECT
@@ -323,7 +208,6 @@ et.emp_task_id,
 t.task_id,
 t.job_id,
 t.detail,
-t.task_date,
 t.start_time_plan,
 t.finish_time_plan,
 et.status,
@@ -348,48 +232,38 @@ AND t.task_date = ?
 
 ORDER BY t.start_time_plan
 `)
-.bind(empId,date)
+.bind(user.emp_id, date)
 .all()
 
 return Response.json(result)
 
 }
 
+
+
 /* START RUNTIME */
 
-if(url.pathname === "/api/runtime/start" && request.method === "POST"){
+if (url.pathname === "/api/runtime/start" && request.method === "POST") {
 
-if(!user) return Response.json({error:"not login"},{status:401})
+if (!user) return Response.json({ error: "not login" }, { status: 401 })
 
-const body:any = await request.json()
+const body: any = await request.json()
 
-/* check if technician already has open runtime */
+/* check already running */
 
 const open = await env.DB.prepare(`
-SELECT r.runtime_id
-FROM runtime_logs r
-JOIN emp_tasks et
-ON et.emp_task_id = r.emp_task_id
-WHERE et.emp_id = ?
-AND r.end_time IS NULL
+SELECT runtime_id
+FROM runtime_logs
+WHERE emp_id = ?
+AND end_time IS NULL
 LIMIT 1
 `)
 .bind(user.emp_id)
 .first()
 
-if(open){
-
-return new Response(
-JSON.stringify({error:"already working"}),
-{
-status:400,
-headers:{ "content-type":"application/json" }
+if (open) {
+return Response.json({ error: "already working" }, { status: 400 })
 }
-)
-
-}
-
-/* create runtime */
 
 const runtimeId = crypto.randomUUID()
 
@@ -398,23 +272,23 @@ INSERT INTO runtime_logs
 (runtime_id, emp_task_id, emp_id, start_time)
 VALUES (?, ?, ?, datetime('now'))
 `)
-.bind(runtimeId,body.emp_task_id,user.emp_id)
+.bind(runtimeId, body.emp_task_id, user.emp_id)
 .run()
 
 return Response.json({
-success:true,
-runtime_id:runtimeId
+success: true,
+runtime_id: runtimeId
 })
 
 }
 
+
+
 /* STOP RUNTIME */
 
-if(url.pathname === "/api/runtime/stop" && request.method === "POST"){
+if (url.pathname === "/api/runtime/stop" && request.method === "POST") {
 
-if(!user) return Response.json({error:"not login"},{status:401})
-
-const body:any = await request.json()
+const body: any = await request.json()
 
 await env.DB.prepare(`
 UPDATE runtime_logs
@@ -424,19 +298,17 @@ WHERE runtime_id = ?
 .bind(body.runtime_id)
 .run()
 
-return Response.json({
-success:true
-})
+return Response.json({ success: true })
 
 }
 
+
+
 /* FINISH TASK */
 
-if(url.pathname === "/api/task/finish" && request.method === "POST"){
+if (url.pathname === "/api/task/finish" && request.method === "POST") {
 
-if(!user) return Response.json({error:"not login"},{status:401})
-
-const body:any = await request.json()
+const body: any = await request.json()
 
 await env.DB.prepare(`
 UPDATE emp_tasks
@@ -446,24 +318,20 @@ WHERE emp_task_id = ?
 .bind(body.emp_task_id)
 .run()
 
-return Response.json({
-success:true
-})
+return Response.json({ success: true })
 
 }
 
-/* GET TECHNICIANS */
 
-if(url.pathname === "/api/technicians"){
 
-const res = await fetch(GAS_URL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"technicians"
-})
+/* TECHNICIANS LIST */
+
+if (url.pathname === "/api/technicians") {
+
+const res = await fetch(GAS_URL, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ action: "technicians" })
 })
 
 const data = await res.json()
@@ -471,8 +339,10 @@ const data = await res.json()
 return Response.json(data)
 
 }
-  
-return new Response("404",{status:404})
+
+
+
+return new Response("404", { status: 404 })
 
 }
 
