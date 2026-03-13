@@ -394,10 +394,10 @@ const runtimeId = crypto.randomUUID()
 
 await env.DB.prepare(`
 INSERT INTO runtime_logs
-(runtime_id, emp_task_id, start_time)
-VALUES (?, ?, datetime('now'))
+(runtime_id, emp_task_id, emp_id, start_time)
+VALUES (?, ?, ?, datetime('now'))
 `)
-.bind(runtimeId,body.emp_task_id)
+.bind(runtimeId,body.emp_task_id,user.emp_id)
 .run()
 
 return Response.json({
