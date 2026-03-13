@@ -258,16 +258,16 @@ const taskId = "TASK-" + Date.now()
 
 await env.DB.prepare(`
 INSERT INTO tasks
-(task_id, job_id, task_name, task_date, priority, detail, created_by)
+(task_id, job_id, detail, task_date, start_time_plan, finish_time_plan, created_by)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 `)
 .bind(
 taskId,
 body.job_id,
-body.task_name,
-body.task_date,
-body.priority,
 body.detail,
+body.task_date,
+body.start_time_plan,
+body.finish_time_plan,
 String(user.emp_id)
 )
 .run()
