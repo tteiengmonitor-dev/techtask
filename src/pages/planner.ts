@@ -2,6 +2,11 @@ export function plannerPage(){
 
 return `
 
+<div class="planner-layout">
+
+<!-- LEFT PANEL -->
+<div class="planner-left">
+
 <h2>Create Task</h2>
 
 <div class="card">
@@ -52,6 +57,22 @@ Loading technicians...
 <br>
 
 <button onclick="createTask()">Create Task</button>
+
+</div>
+
+</div>
+
+
+<!-- RIGHT PANEL -->
+<div class="planner-right">
+
+<h2>Technician Gantt Chart</h2>
+
+<div id="ganttChart">
+Loading schedule...
+</div>
+
+</div>
 
 </div>
 
