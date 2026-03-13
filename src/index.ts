@@ -185,7 +185,13 @@ const content = `
 
 `
 
-return new Response(renderHtml("Planner Menu",content),{
+return new Response(
+renderHtml(
+"Planner Menu",
+content,
+user
+),
+{
 headers:{ "content-type":"text/html"}
 })
 
