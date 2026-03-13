@@ -278,7 +278,10 @@ user.emp_id
 
 if(body.technicians && body.technicians.length){
 
-for(const emp of body.technicians){
+// remove duplicate technician IDs
+const techs = [...new Set(body.technicians)]
+
+for(const emp of techs){
 
 await env.DB.prepare(`
 INSERT INTO emp_tasks
