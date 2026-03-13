@@ -65,15 +65,7 @@ new Date().toISOString().slice(0,10)
 
 async function loadTechnicians(){
 
-const res = await fetch(GAS_URL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"technicians"
-})
-})
+const res = await fetch("/api/technicians")
 
 const data = await res.json()
 
@@ -89,7 +81,6 @@ list.innerHTML = data.map(t => \`
 \`).join("")
 
 }
-
 
 async function createTask(){
 
