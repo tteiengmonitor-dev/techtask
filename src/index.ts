@@ -433,6 +433,26 @@ success:true
 })
 
 }
+
+/* GET TECHNICIANS */
+
+if(url.pathname === "/api/technicians"){
+
+const res = await fetch(GAS_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"technicians"
+})
+})
+
+const data = await res.json()
+
+return Response.json(data)
+
+}
   
 return new Response("404",{status:404})
 
