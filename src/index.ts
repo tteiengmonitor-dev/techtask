@@ -359,23 +359,29 @@ if(!user) return Response.json({error:"not login"},{status:401})
 
 const body:any = await request.json()
 
-/* check if technician already working */
+/* check if technician already has open runtime */
 
-const openRuntime = await env.DB.prepare(`
+const open = await env.DB.prepare(`
 SELECT r.runtime_id
 FROM runtime_logs r
-JOIN emp_tasks et ON et.emp_task_id = r.emp_task_id
+JOIN emp_tasks et
+ON et.emp_task_id = r.emp_task_id
 WHERE et.emp_id = ?
 AND r.end_time IS NULL
+LIMIT 1
 `)
 .bind(user.emp_id)
 .first()
 
-if(openRuntime){
+if(open){
 
-return Response.json({
-error:"Technician already working"
-},{status:400})
+return new Response(
+JSON.stringify({error:"already working"}),
+{
+status:400,
+headers:{ "content-type":"application/json" }
+}
+)
 
 }
 
