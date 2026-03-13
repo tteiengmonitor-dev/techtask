@@ -317,13 +317,13 @@ task_id:taskId
 
 }
 
-/* API MY TASKS */
+/* GET MY TASKS */
 
 if(url.pathname === "/api/mytasks"){
 
-if(!user) {
-  return Response.json({error:"not login"},{status:401})
-}
+if(!user) return Response.json({error:"not login"},{status:401})
+
+const date = url.searchParams.get("date")
 
 const empId = String(user.emp_id)
 
@@ -332,40 +332,83 @@ SELECT
 et.emp_task_id,
 t.task_id,
 t.job_id,
-t.task_name,
+t.detail,
 t.task_date,
-t.priority,
-et.status
+t.start_time_plan,
+t.finish_time_plan,
+et.status,
+
+r.runtime_id,
+CASE
+WHEN r.runtime_id IS NOT NULL THEN 1
+ELSE 0
+END as runtime_open
+
 FROM emp_tasks et
-JOIN tasks t ON et.task_id = t.task_id
+
+JOIN tasks t
+ON et.task_id = t.task_id
+
+LEFT JOIN runtime_logs r
+ON r.emp_task_id = et.emp_task_id
+AND r.end_time IS NULL
+
 WHERE et.emp_id = ?
-ORDER BY t.task_date DESC
+AND t.task_date = ?
+
+ORDER BY t.start_time_plan
 `)
-.bind(empId)
+.bind(empId,date)
 .all()
 
 return Response.json(result)
 
 }
 
-/* START TASK */
+/* START RUNTIME */
 
-if(url.pathname === "/api/task/start" && request.method === "POST"){
+if(url.pathname === "/api/runtime/start" && request.method === "POST"){
+
+if(!user) return Response.json({error:"not login"},{status:401})
+
+const body:any = await request.json()
+
+const runtimeId = crypto.randomUUID()
+
+await env.DB.prepare(`
+INSERT INTO runtime_logs
+(runtime_id, emp_task_id, start_time)
+VALUES (?, ?, datetime('now'))
+`)
+.bind(runtimeId,body.emp_task_id)
+.run()
+
+return Response.json({
+success:true,
+runtime_id:runtimeId
+})
+
+}
+
+/* STOP RUNTIME */
+
+if(url.pathname === "/api/runtime/stop" && request.method === "POST"){
 
 if(!user) return Response.json({error:"not login"},{status:401})
 
 const body:any = await request.json()
 
 await env.DB.prepare(`
-UPDATE emp_tasks
-SET status='working',
-start_time=datetime('now')
-WHERE emp_task_id=? AND emp_id=?
+UPDATE runtime_logs
+SET end_time = datetime('now')
+WHERE runtime_id = ?
 `)
-.bind(body.emp_task_id, String(user.emp_id))
+.bind(body.runtime_id)
 .run()
 
-return Response.json({success:true})
+return Response.json({
+success:true
+})
 
 }
 
@@ -379,14 +422,15 @@ const body:any = await request.json()
 
 await env.DB.prepare(`
 UPDATE emp_tasks
-SET status='done',
-end_time=datetime('now')
-WHERE emp_task_id=? AND emp_id=?
+SET status='done'
+WHERE emp_task_id = ?
 `)
-.bind(body.emp_task_id, String(user.emp_id))
+.bind(body.emp_task_id)
 .run()
 
-return Response.json({success:true})
+return Response.json({
+success:true
+})
 
 }
   
