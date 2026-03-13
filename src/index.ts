@@ -359,6 +359,28 @@ if(!user) return Response.json({error:"not login"},{status:401})
 
 const body:any = await request.json()
 
+/* check if technician already working */
+
+const openRuntime = await env.DB.prepare(`
+SELECT r.runtime_id
+FROM runtime_logs r
+JOIN emp_tasks et ON et.emp_task_id = r.emp_task_id
+WHERE et.emp_id = ?
+AND r.end_time IS NULL
+`)
+.bind(user.emp_id)
+.first()
+
+if(openRuntime){
+
+return Response.json({
+error:"Technician already working"
+},{status:400})
+
+}
+
+/* create runtime */
+
 const runtimeId = crypto.randomUUID()
 
 await env.DB.prepare(`
