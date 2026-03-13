@@ -274,37 +274,36 @@ user.emp_id
 )
 .run()
 
-/* create emp_tasks */
+/* create runtime */
 
-if(body.technicians && body.technicians.length){
+const runtimeId = crypto.randomUUID()
 
-// remove duplicate technician IDs
-const techs = [...new Set(body.technicians)]
-
-for(const emp of techs){
+try{
 
 await env.DB.prepare(`
-INSERT INTO emp_tasks
-(emp_task_id, task_id, emp_id)
-VALUES (?, ?, ?)
+INSERT INTO runtime_logs
+(runtime_id, emp_task_id, emp_id, start_time)
+VALUES (?, ?, ?, datetime('now'))
 `)
-.bind(
-crypto.randomUUID(),
-taskId,
-emp
-)
+.bind(runtimeId,body.emp_task_id,user.emp_id)
 .run()
 
+}catch(e){
+
+return new Response(
+JSON.stringify({error:"already working"}),
+{
+status:400,
+headers:{ "content-type":"application/json" }
 }
+)
 
 }
 
 return Response.json({
 success:true,
-task_id:taskId
+runtime_id:runtimeId
 })
-
-}
 
 /* GET MY TASKS */
 
