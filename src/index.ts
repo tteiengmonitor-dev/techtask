@@ -392,6 +392,8 @@ headers:{ "content-type":"application/json" }
 
 const runtimeId = crypto.randomUUID()
 
+try{
+
 await env.DB.prepare(`
 INSERT INTO runtime_logs
 (runtime_id, emp_task_id, emp_id, start_time)
@@ -400,10 +402,19 @@ VALUES (?, ?, ?, datetime('now'))
 .bind(runtimeId,body.emp_task_id,user.emp_id)
 .run()
 
-return Response.json({
-success:true,
-runtime_id:runtimeId
-})
+}catch(e){
+
+console.log("Runtime start blocked:", e)
+
+return new Response(
+JSON.stringify({error:"already working"}),
+{
+status:400,
+headers:{ "content-type":"application/json" }
+}
+)
+
+}
 
 }
 
