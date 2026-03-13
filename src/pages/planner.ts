@@ -6,33 +6,42 @@ return `
 
 <div class="card">
 
-<div style="margin-bottom:10px">
+<div>
 Job ID<br>
 <input id="job_id" style="width:100%">
 </div>
 
-<div style="margin-bottom:10px">
-Task Name<br>
-<input id="task_name" style="width:100%">
+<br>
+
+<div>
+Task Detail<br>
+<textarea id="detail" style="width:100%"></textarea>
 </div>
 
-<div style="margin-bottom:10px">
+<br>
+
+<div>
 Task Date<br>
 <input id="task_date" type="date">
 </div>
 
-<div style="margin-bottom:10px">
-Priority<br>
-<select id="priority">
-<option value="normal">Normal</option>
-<option value="urgent">Urgent</option>
-</select>
+<br>
+
+<div style="display:flex;gap:20px">
+
+<div>
+Start Time<br>
+<input id="start_time" type="time">
 </div>
 
-<div style="margin-bottom:10px">
-Detail<br>
-<textarea id="detail" style="width:100%"></textarea>
+<div>
+Finish Time<br>
+<input id="finish_time" type="time">
 </div>
+
+</div>
+
+<br>
 
 <h3>Assign Technician</h3>
 
@@ -56,10 +65,10 @@ const technicians = [...document.querySelectorAll("input[type=checkbox]:checked"
 const data = {
 
 job_id: document.getElementById("job_id").value,
-task_name: document.getElementById("task_name").value,
-task_date: document.getElementById("task_date").value,
-priority: document.getElementById("priority").value,
 detail: document.getElementById("detail").value,
+task_date: document.getElementById("task_date").value,
+start_time_plan: document.getElementById("start_time").value,
+finish_time_plan: document.getElementById("finish_time").value,
 technicians: technicians
 
 }
